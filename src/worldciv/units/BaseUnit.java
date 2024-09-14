@@ -9,6 +9,7 @@ public class BaseUnit {
 	public static final String[] UNIT_TYPE = {"Explorer"};
 	
 	public final int ID;
+	public int tileID;
 	public int x;
 	public int y;
 	public int health;
@@ -23,6 +24,7 @@ public class BaseUnit {
 	
 	BaseUnit(int tileID, String owner, int type, int uClass) {
 		
+		this.tileID = tileID;
 		x = Game.WORLD.get(tileID)[0];
 		y = Game.WORLD.get(tileID)[1];
 		this.owner = owner;
@@ -34,10 +36,14 @@ public class BaseUnit {
 		
 	}
 	
-	public void move(int targetX, int targetY) {
-
-		x = targetX;
-		y = targetY;
+	public void move(int tileID) {
+		
+		Game.WORLD.get(this.tileID)[6] = -1;
+		Game.WORLD.get(tileID)[6] = ID;
+		this.tileID = tileID;
+		x = Game.WORLD.get(tileID)[0];
+		y = Game.WORLD.get(tileID)[1];
+		System.out.println("Unit #" + ID + " has been moved");
 		
 	}
 
@@ -49,7 +55,7 @@ public class BaseUnit {
 	
 	public void kill() {
 		
-		Game.WORLD.get(x * Game.WORLD_WIDTH + y)[6] = -1;
+		Game.WORLD.get(tileID)[6] = -1;
 		Game.UNITS.remove(ID);
 		System.out.println("Unit #" + ID + " has been killed");
 		
@@ -58,7 +64,23 @@ public class BaseUnit {
 	public void clicked() {
 		
 		System.out.println("Unit #" + ID + " has been clicked");
-		kill();
+		if (Game.CURRENT_SELECTED_UNIT != ID) {
+			
+			Game.CURRENT_SELECTED_UNIT = ID;
+			System.out.println("The current selected unit is " + Game.CURRENT_SELECTED_UNIT);
+			
+		} else {
+			
+			deselect();
+			
+		}
+		
+	}
+	
+	public void deselect() {
+		
+		Game.CURRENT_SELECTED_UNIT = -1;
+		System.out.println("Unit #" + ID + " has been deselected");
 		
 	}
 	

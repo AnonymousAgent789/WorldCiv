@@ -3,7 +3,7 @@ package worldciv.logic.generation;
 import java.util.Random;
 import worldciv.main.Game;
 
-public class Spawner {
+public abstract class Spawner {
 	
 	public static int findUnitSpawningLocation() {
 		

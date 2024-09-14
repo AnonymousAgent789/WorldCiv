@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import worldciv.logic.units.Movement;
 import worldciv.main.Game;
 
 @SuppressWarnings("serial")
@@ -30,6 +31,7 @@ public class GamePanel extends JPanel {
 	boolean mouseDown = false;
 	BufferedImage tileSet;
 	BufferedImage unitSet;
+	java.util.ArrayList<Integer> validMovementLocations = new java.util.ArrayList<Integer>();
 	DragAndMoveScreenThread dragAndMoveScreenThread = new DragAndMoveScreenThread();
 	
 	public GamePanel() {
@@ -132,6 +134,20 @@ public class GamePanel extends JPanel {
 				g2.drawRect(getXOnScreen(Game.WORLD.get(current)[0] * tileSize), getYOnScreen(Game.WORLD.get(current)[1] * tileSize), tileSize, tileSize);
 				
 				tilesOnScreen++;
+				
+			}
+			
+		}
+		
+		//Unit movement
+		if (Game.CURRENT_SELECTED_UNIT != -1) {
+			
+			validMovementLocations = Movement.move(Game.UNITS.get(Game.CURRENT_SELECTED_UNIT).tileID, Game.UNITS.get(Game.CURRENT_SELECTED_UNIT).moves);
+			
+			for (int i : validMovementLocations) {
+				
+				g2.setColor(new Color(255, 255, 255, 125));
+				g2.fillOval(getXOnScreen(Game.WORLD.get(i)[0] * tileSize) + tileSize / 4, getYOnScreen(Game.WORLD.get(i)[1] * tileSize) + tileSize / 4, tileSize / 2, tileSize / 2);
 				
 			}
 			
@@ -306,10 +322,26 @@ public class GamePanel extends JPanel {
 				
 				int tileID = getTileIDFromRelativePos(mouseX * 10 / tileSize, mouseY * 10 / tileSize);
 				
-				if (Game.WORLD.get(tileID)[6] > -1) {
+				if (Game.WORLD.get(tileID)[6] > -1) { //If tile occupied by unit
 					
 					Game.UNITS.get(Game.WORLD.get(tileID)[6]).clicked();
 					repaint();
+					
+				} else if (Game.CURRENT_SELECTED_UNIT != -1) { //If a unit is currently selected
+					
+					if (validMovementLocations.contains(tileID)) { //Move unit
+					
+						Game.UNITS.get(Game.CURRENT_SELECTED_UNIT).move(tileID);
+						Game.UNITS.get(Game.CURRENT_SELECTED_UNIT).deselect();
+						repaint();
+					
+					} else {
+					
+						validMovementLocations.clear();
+						Game.UNITS.get(Game.CURRENT_SELECTED_UNIT).deselect();
+						repaint();
+					
+					}
 					
 				}
 				

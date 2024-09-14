@@ -17,6 +17,8 @@ public class Game {
 	public static int WORLD_SIZE;
 	public static int WORLD_WIDTH;
 	public static int UNIT_ID_COUNTER = 0;
+	public static int CURRENT_SELECTED_UNIT = -1;
+	public static int TURN = 0;
 	static GameScreen gameScreen;
 	static Random random = new Random();
 	
