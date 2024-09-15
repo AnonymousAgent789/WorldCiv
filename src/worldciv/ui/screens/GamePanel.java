@@ -8,6 +8,8 @@ import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Map.Entry;
+
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import worldciv.logic.units.Movement;
@@ -31,7 +33,7 @@ public class GamePanel extends JPanel {
 	boolean mouseDown = false;
 	BufferedImage tileSet;
 	BufferedImage unitSet;
-	java.util.ArrayList<Integer> validMovementLocations = new java.util.ArrayList<Integer>();
+	java.util.HashMap<Integer, Integer> validMovementLocations = new java.util.HashMap<Integer, Integer>();
 	DragAndMoveScreenThread dragAndMoveScreenThread = new DragAndMoveScreenThread();
 	
 	public GamePanel() {
@@ -66,8 +68,8 @@ public class GamePanel extends JPanel {
 		screenY = Game.WORLD_WIDTH / 2 * tileSize;
 		centreXOfFocus = screenX;
 		centreYOfFocus = screenY;
-		mouseX = getRelativeXFromScreen(MouseInfo.getPointerInfo().getLocation().x);
-		mouseY = getRelativeYFromScreen(MouseInfo.getPointerInfo().getLocation().y);
+		mouseX = 0;
+		mouseY = 0;
 		
 	}
 	
@@ -144,19 +146,19 @@ public class GamePanel extends JPanel {
 			
 			validMovementLocations = Movement.move(Game.UNITS.get(Game.CURRENT_SELECTED_UNIT).tileID, Game.UNITS.get(Game.CURRENT_SELECTED_UNIT).moves);
 			
-			for (int i : validMovementLocations) {
+			for (Entry<Integer, Integer> i : validMovementLocations.entrySet()) {
 				
 				g2.setColor(new Color(255, 255, 255, 125));
-				g2.fillOval(getXOnScreen(Game.WORLD.get(i)[0] * tileSize) + tileSize / 4, getYOnScreen(Game.WORLD.get(i)[1] * tileSize) + tileSize / 4, tileSize / 2, tileSize / 2);
+				g2.fillOval(getXOnScreen(Game.WORLD.get(i.getKey())[0] * tileSize) + tileSize / 4, getYOnScreen(Game.WORLD.get(i.getKey())[1] * tileSize) + tileSize / 4, tileSize / 2, tileSize / 2);
 				
 			}
 			
 		}
 		
 		//Mouse
-		mouseX = getRelativeXFromScreen(MouseInfo.getPointerInfo().getLocation().x);
-		mouseY = getRelativeYFromScreen(MouseInfo.getPointerInfo().getLocation().y);
-		
+		mouseX = mouseX < 0 ? 0 : (mouseX / tileSize > Game.WORLD_WIDTH ? Game.WORLD_WIDTH * tileSize : getRelativeXFromScreen(MouseInfo.getPointerInfo().getLocation().x));
+		mouseY = mouseY < 0 ? 0 : (mouseY / tileSize > Game.WORLD_WIDTH ? Game.WORLD_WIDTH * tileSize : getRelativeYFromScreen(MouseInfo.getPointerInfo().getLocation().y));
+
 		//Debug
 		g2.setColor(new Color(255, 255, 255));
 		g2.drawString("Game.WORLD_WIDTH: " + Game.WORLD_WIDTH, 10, 15);
@@ -208,8 +210,9 @@ public class GamePanel extends JPanel {
 	}
 	
 	int getTileIDFromRelativePos(int xPosRelative, int yPosRelative) {
-		
-		return ((xPosRelative / 10) * Game.WORLD_WIDTH) + (yPosRelative / 10);
+
+		int ID = ((xPosRelative / 10) * Game.WORLD_WIDTH) + (yPosRelative / 10);
+		return ID < 0 ? 0 : ID >= Game.WORLD_SIZE ? Game.WORLD_SIZE - 1 : ID;
 		
 	} 
 	
@@ -318,7 +321,7 @@ public class GamePanel extends JPanel {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			
-			if (mouseX > 0 && mouseX / tileSize < Game.WORLD_WIDTH && mouseY > 0 && mouseY / tileSize < Game.WORLD_WIDTH) {
+			if (mouseX > 0 && mouseX / tileSize < Game.WORLD_WIDTH && mouseY > 0 && mouseY / tileSize < Game.WORLD_WIDTH) { //Within bounds
 				
 				int tileID = getTileIDFromRelativePos(mouseX * 10 / tileSize, mouseY * 10 / tileSize);
 				
@@ -329,10 +332,12 @@ public class GamePanel extends JPanel {
 					
 				} else if (Game.CURRENT_SELECTED_UNIT != -1) { //If a unit is currently selected
 					
-					if (validMovementLocations.contains(tileID)) { //Move unit
+					if (validMovementLocations.containsKey(tileID)) { //Move unit
 					
 						Game.UNITS.get(Game.CURRENT_SELECTED_UNIT).move(tileID);
+						Game.UNITS.get(Game.CURRENT_SELECTED_UNIT).moves -= validMovementLocations.get(tileID);
 						Game.UNITS.get(Game.CURRENT_SELECTED_UNIT).deselect();
+						System.out.println(validMovementLocations.get(tileID));
 						repaint();
 					
 					} else {

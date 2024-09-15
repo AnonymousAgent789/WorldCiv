@@ -9,7 +9,7 @@ public class Explorer extends BaseUnit implements Civilian {
 		super(tileID, owner, 0, 0);
 		health = 10;
 		strength = 0;
-		moves = 2;
+		moves = 3;
 		
 	}
 	
