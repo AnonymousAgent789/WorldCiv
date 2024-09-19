@@ -27,8 +27,8 @@ public class GamePanel extends JPanel {
 	int centreYOfFocus;
 	int mouseXWhenDown;
 	int mouseYWhenDown;
-	int mouseX;
-	int mouseY;
+	int relativeMouseX;
+	int relativeMouseY;
 	int tilesOnScreen;
 	boolean mouseDown = false;
 	BufferedImage tileSet;
@@ -68,8 +68,8 @@ public class GamePanel extends JPanel {
 		screenY = Game.WORLD_WIDTH / 2 * tileSize;
 		centreXOfFocus = screenX;
 		centreYOfFocus = screenY;
-		mouseX = 0;
-		mouseY = 0;
+		relativeMouseX = 0;
+		relativeMouseY = 0;
 		
 	}
 	
@@ -92,34 +92,34 @@ public class GamePanel extends JPanel {
 				//Base terrain
 				if (Game.WORLD.get(current)[2] == 2) { //Mountains
 					
-					g2.drawImage(tileSet.getSubimage(0, 300, 100, 100).getScaledInstance(tileSize, tileSize, BufferedImage.SCALE_FAST), getXOnScreen(Game.WORLD.get(current)[0] * tileSize), getYOnScreen(Game.WORLD.get(current)[1] * tileSize), null);
+					g2.drawImage(tileSet.getSubimage(0, 300, 100, 100).getScaledInstance(tileSize, tileSize, BufferedImage.SCALE_FAST), getXOnScreen(Game.WORLD.get(current)[0]), getYOnScreen(Game.WORLD.get(current)[1]), null);
 					
 				} else if (Game.WORLD.get(current)[2] == 1) { //Land
 					
-					g2.drawImage(tileSet.getSubimage(0, 0, 100, 100).getScaledInstance(tileSize, tileSize, BufferedImage.SCALE_FAST), getXOnScreen(Game.WORLD.get(current)[0] * tileSize), getYOnScreen(Game.WORLD.get(current)[1] * tileSize), null);
+					g2.drawImage(tileSet.getSubimage(0, 0, 100, 100).getScaledInstance(tileSize, tileSize, BufferedImage.SCALE_FAST), getXOnScreen(Game.WORLD.get(current)[0]), getYOnScreen(Game.WORLD.get(current)[1]), null);
 					
 				} else if (Game.WORLD.get(current)[2] == -1) { //Shore
 					
-					g2.drawImage(tileSet.getSubimage(0, 200, 100, 100).getScaledInstance(tileSize, tileSize, BufferedImage.SCALE_FAST), getXOnScreen(Game.WORLD.get(current)[0] * tileSize), getYOnScreen(Game.WORLD.get(current)[1] * tileSize), null);
+					g2.drawImage(tileSet.getSubimage(0, 200, 100, 100).getScaledInstance(tileSize, tileSize, BufferedImage.SCALE_FAST), getXOnScreen(Game.WORLD.get(current)[0]), getYOnScreen(Game.WORLD.get(current)[1]), null);
 					
 				} else if (Game.WORLD.get(current)[2] == -2) { //Ocean
 					
-					g2.drawImage(tileSet.getSubimage(0, 100, 100, 100).getScaledInstance(tileSize, tileSize, BufferedImage.SCALE_FAST), getXOnScreen(Game.WORLD.get(current)[0] * tileSize), getYOnScreen(Game.WORLD.get(current)[1] * tileSize), null);
+					g2.drawImage(tileSet.getSubimage(0, 100, 100, 100).getScaledInstance(tileSize, tileSize, BufferedImage.SCALE_FAST), getXOnScreen(Game.WORLD.get(current)[0]), getYOnScreen(Game.WORLD.get(current)[1]), null);
 					
 				}
 				
 				//Terrain features
 				if (Game.WORLD.get(current)[3] == 1) { //Hill
 					
-					g2.drawImage(tileSet.getSubimage(0, 400, 100, 100).getScaledInstance(tileSize, tileSize, BufferedImage.SCALE_FAST), getXOnScreen(Game.WORLD.get(current)[0] * tileSize), getYOnScreen(Game.WORLD.get(current)[1] * tileSize), null);
+					g2.drawImage(tileSet.getSubimage(0, 400, 100, 100).getScaledInstance(tileSize, tileSize, BufferedImage.SCALE_FAST), getXOnScreen(Game.WORLD.get(current)[0]), getYOnScreen(Game.WORLD.get(current)[1]), null);
 					
 				} else if (Game.WORLD.get(current)[3] == 2) { //Forest
 					
-					g2.drawImage(tileSet.getSubimage(0, 500, 100, 100).getScaledInstance(tileSize, tileSize, BufferedImage.SCALE_FAST), getXOnScreen(Game.WORLD.get(current)[0] * tileSize), getYOnScreen(Game.WORLD.get(current)[1] * tileSize), null);
+					g2.drawImage(tileSet.getSubimage(0, 500, 100, 100).getScaledInstance(tileSize, tileSize, BufferedImage.SCALE_FAST), getXOnScreen(Game.WORLD.get(current)[0]), getYOnScreen(Game.WORLD.get(current)[1]), null);
 					
 				} else if (Game.WORLD.get(current)[3] == 3) { //Lake
 					
-					g2.drawImage(tileSet.getSubimage(0, 600, 100, 100).getScaledInstance(tileSize, tileSize, BufferedImage.SCALE_FAST), getXOnScreen(Game.WORLD.get(current)[0] * tileSize), getYOnScreen(Game.WORLD.get(current)[1] * tileSize), null);
+					g2.drawImage(tileSet.getSubimage(0, 600, 100, 100).getScaledInstance(tileSize, tileSize, BufferedImage.SCALE_FAST), getXOnScreen(Game.WORLD.get(current)[0]), getYOnScreen(Game.WORLD.get(current)[1]), null);
 					
 				}
 				
@@ -127,13 +127,13 @@ public class GamePanel extends JPanel {
 				if (Game.WORLD.get(current)[6] >= 0) {
 					
 					int currentUnitType = Game.UNITS.get(Game.WORLD.get(current)[6]).unitType;
-					g2.drawImage(unitSet.getSubimage(Math.floorDiv(currentUnitType, 10) * 100, Math.floorMod(currentUnitType, 10) * 100, 100, 100).getScaledInstance(tileSize, tileSize, BufferedImage.SCALE_FAST), getXOnScreen(Game.WORLD.get(current)[0] * tileSize), getYOnScreen(Game.WORLD.get(current)[1] * tileSize), null);
+					g2.drawImage(unitSet.getSubimage(Math.floorDiv(currentUnitType, 10) * 100, Math.floorMod(currentUnitType, 10) * 100, 100, 100).getScaledInstance(tileSize, tileSize, BufferedImage.SCALE_FAST), getXOnScreen(Game.WORLD.get(current)[0]), getYOnScreen(Game.WORLD.get(current)[1]), null);
 					
 				}
 				
 				//Outline
 				g2.setColor(new Color(50, 50, 50, 50));
-				g2.drawRect(getXOnScreen(Game.WORLD.get(current)[0] * tileSize), getYOnScreen(Game.WORLD.get(current)[1] * tileSize), tileSize, tileSize);
+				g2.drawRect(getXOnScreen(Game.WORLD.get(current)[0]), getYOnScreen(Game.WORLD.get(current)[1]), tileSize, tileSize);
 				
 				tilesOnScreen++;
 				
@@ -149,15 +149,20 @@ public class GamePanel extends JPanel {
 			for (Entry<Integer, Integer> i : validMovementLocations.entrySet()) {
 				
 				g2.setColor(new Color(255, 255, 255, 125));
-				g2.fillOval(getXOnScreen(Game.WORLD.get(i.getKey())[0] * tileSize) + tileSize / 4, getYOnScreen(Game.WORLD.get(i.getKey())[1] * tileSize) + tileSize / 4, tileSize / 2, tileSize / 2);
+				g2.fillOval(getXOnScreen(Game.WORLD.get(i.getKey())[0]) + tileSize / 4, getYOnScreen(Game.WORLD.get(i.getKey())[1]) + tileSize / 4, tileSize / 2, tileSize / 2);
 				
 			}
 			
 		}
 		
+		//Crosshair
+		g2.setColor(new Color(50, 50, 50, 50));
+		g2.drawLine(centreX - 5, centreY, centreX + 5, centreY);
+		g2.drawLine(centreX, centreY - 5, centreX, centreY + 5);
+		
 		//Mouse
-		mouseX = mouseX < 0 ? 0 : (mouseX / tileSize > Game.WORLD_WIDTH ? Game.WORLD_WIDTH * tileSize : getRelativeXFromScreen(MouseInfo.getPointerInfo().getLocation().x));
-		mouseY = mouseY < 0 ? 0 : (mouseY / tileSize > Game.WORLD_WIDTH ? Game.WORLD_WIDTH * tileSize : getRelativeYFromScreen(MouseInfo.getPointerInfo().getLocation().y));
+		relativeMouseX = getRelativeXFromScreen(MouseInfo.getPointerInfo().getLocation().x);
+		relativeMouseY = getRelativeYFromScreen(MouseInfo.getPointerInfo().getLocation().y - 30);
 
 		//Debug
 		g2.setColor(new Color(255, 255, 255));
@@ -175,46 +180,54 @@ public class GamePanel extends JPanel {
 		g2.drawString("centredTileTerrain: " + Game.WORLD.get(getTileIDFromRelativePos(centreXOfFocus, centreYOfFocus))[2], 10, 180);
 		g2.drawString("centredTileFeature: " + Game.WORLD.get(getTileIDFromRelativePos(centreXOfFocus, centreYOfFocus))[3], 10, 195);
 		g2.drawString("centredTileOccupied: " + Game.WORLD.get(getTileIDFromRelativePos(centreXOfFocus, centreYOfFocus))[6], 10, 210);
-		g2.drawString("mouseX: " + mouseX, 10, 225);
-		g2.drawString("mouseY: " + mouseY, 10, 240);
-		g2.drawString("tileUnderMouseID: " + getTileIDFromRelativePos(mouseX * 10 / tileSize, mouseY * 10 / tileSize), 10, 255);
-		g2.drawString("tileUnderMouseTerrain: " + Game.WORLD.get(getTileIDFromRelativePos(mouseX * 10 / tileSize, mouseY * 10 / tileSize))[2], 10, 270);
-		g2.drawString("tileUnderMouseFeature: " + Game.WORLD.get(getTileIDFromRelativePos(mouseX * 10 / tileSize, mouseY * 10 / tileSize))[3], 10, 285);
-		g2.drawString("tileUnderMouseOccupied: " + Game.WORLD.get(getTileIDFromRelativePos(mouseX * 10 / tileSize, mouseY * 10 / tileSize))[6], 10, 300);
-		g2.fillRect(centreX - 1, centreY - 1, 3, 3);
+		g2.drawString("relativeMouseX: " + relativeMouseX, 10, 225);
+		g2.drawString("relativeMouseY: " + relativeMouseY, 10, 240);
+		g2.drawString("getTileIDFromMousePos(): " + getTileIDFromMousePos(), 10, 255);
+		g2.drawString("tileUnderMouseTerrain: " + Game.WORLD.get(getTileIDFromMousePos())[2], 10, 270);
+		g2.drawString("tileUnderMouseFeature: " + Game.WORLD.get(getTileIDFromMousePos())[3], 10, 285);
+		g2.drawString("tileUnderMouseOccupied: " + Game.WORLD.get(getTileIDFromMousePos())[6], 10, 300);
 		
 	}
 	
 	int getXOnScreen(int xPosOfObjectRelative) {
 		
-		return centreX - screenX + xPosOfObjectRelative;
+		return centreX - screenX + (xPosOfObjectRelative * tileSize);
 		
 	}
 	
 	int getYOnScreen(int yPosOfObjectRelative) {
 		
-		return centreY - screenY + yPosOfObjectRelative;
+		return centreY - screenY + (yPosOfObjectRelative * tileSize);
 		
 	}
 	
 	int getRelativeXFromScreen(int xOnScreen) {
 		
-		return xOnScreen - centreX + screenX;
+		int x = (xOnScreen - centreX + screenX) / tileSize;
+		return x < 0 ? 0 : (x >= Game.WORLD_WIDTH ? Game.WORLD_WIDTH - 1 : x);
 		
 	}
 	
 	int getRelativeYFromScreen(int yOnScreen) {
 		
-		return yOnScreen - centreY + screenY;
+		int y = (yOnScreen - centreY + screenY) / tileSize;
+		return y < 0 ? 0 : (y >= Game.WORLD_WIDTH ? Game.WORLD_WIDTH - 1 : y);
 		
 	}
 	
 	int getTileIDFromRelativePos(int xPosRelative, int yPosRelative) {
 
 		int ID = ((xPosRelative / 10) * Game.WORLD_WIDTH) + (yPosRelative / 10);
-		return ID < 0 ? 0 : ID >= Game.WORLD_SIZE ? Game.WORLD_SIZE - 1 : ID;
+		return ID < 0 ? 0 : ID >= Game.WORLD_SIZE ? Game.WORLD_SIZE - 1 : ID; //Out of bounds
 		
-	} 
+	}
+	
+	int getTileIDFromMousePos() {
+		
+		int ID = relativeMouseX * 40 + relativeMouseY;
+		return ID < 0 ? 0 : ID >= Game.WORLD_SIZE ? Game.WORLD_SIZE - 1 : ID; //Out of bounds
+		
+	}
 	
 	private class resizeOnScroll implements MouseWheelListener {
 
@@ -321,9 +334,9 @@ public class GamePanel extends JPanel {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			
-			if (mouseX > 0 && mouseX / tileSize < Game.WORLD_WIDTH && mouseY > 0 && mouseY / tileSize < Game.WORLD_WIDTH) { //Within bounds
+			if (relativeMouseX > 0 && relativeMouseX < Game.WORLD_WIDTH && relativeMouseY > 0 && relativeMouseY < Game.WORLD_WIDTH) { //Within bounds
 				
-				int tileID = getTileIDFromRelativePos(mouseX * 10 / tileSize, mouseY * 10 / tileSize);
+				int tileID = getTileIDFromMousePos();
 				
 				if (Game.WORLD.get(tileID)[6] > -1) { //If tile occupied by unit
 					
@@ -337,7 +350,6 @@ public class GamePanel extends JPanel {
 						Game.UNITS.get(Game.CURRENT_SELECTED_UNIT).move(tileID);
 						Game.UNITS.get(Game.CURRENT_SELECTED_UNIT).moves -= validMovementLocations.get(tileID);
 						Game.UNITS.get(Game.CURRENT_SELECTED_UNIT).deselect();
-						System.out.println(validMovementLocations.get(tileID));
 						repaint();
 					
 					} else {
