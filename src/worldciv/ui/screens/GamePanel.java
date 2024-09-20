@@ -162,7 +162,7 @@ public class GamePanel extends JPanel {
 		
 		//Mouse
 		relativeMouseX = getRelativeXFromScreen(MouseInfo.getPointerInfo().getLocation().x);
-		relativeMouseY = getRelativeYFromScreen(MouseInfo.getPointerInfo().getLocation().y - 30);
+		relativeMouseY = getRelativeYFromScreen(MouseInfo.getPointerInfo().getLocation().y - 23);
 
 		//Debug
 		g2.setColor(new Color(255, 255, 255));
